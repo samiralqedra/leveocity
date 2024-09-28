@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volt</title>
+    <style>
+        body {
+            background: url('creative.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #fff;
+            font-weight: 700;
+            text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+            font-size: 50px;
+            margin-top: 50px;
+        }
+
+        .menu-container {
+            position: relative;
+            display: inline-block;
+            margin-left: 1200px;
+            margin-top: -230px;
+        }
+
+        .menu-icon {
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .menu-icon .bar {
+            width: 23px;
+            height: 3px;
+            background-color: rgba(0, 0, 0, 0.7);
+            margin: 4px 0;
+            transition: 0.4s;
+        }
+
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            min-width: 160px;
+            border-radius: 10px;
+        }
+
+        .menu-content a {
+            color: #fff;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .menu-content a:hover {
+            background-color: #ddd;
+            color: grey;
+        }
+
+        video {
+            margin-top: 200px;
+            box-shadow: 0px 8px 16px rgb(0, 0, 1);
+            width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        h2{
+            color: #fff;
+            font-weight: 600;
+            text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.8);
+            font-size: 25px;
+            margin-top:-5px;
+        }
+
+        p{
+            color: #fff;
+            font-weight: 300;
+            text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.8);
+            font-size: 15px;
+            margin-top:-1px;  
+        }
+    </style>
+</head>
+<body>
+    <h1>VOLT</h1>
+
+    <h2>how does a maglev train work?</h2>
+    <p>a maglev train works using the magnetic repultion created by adjustiong 2 magnet poles that are same to eachother to face eachother, the maglev train moves due to the change in poles quickly by pulling then pushing the train</p>
+    <div class="menu-container">
+        <div class="menu-icon" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="menu-content" id="menuContent">
+            <a href="index2.html">Home</a>
+            <a href="index3.html">About</a>
+            <a href="index4.html">More about Volt</a>
+            <a href="index.html">VoltBot</a>
+        </div>
+    </div>
+
+    <video controls>
+        <source src="How do maglev trains work_.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+<br><br><br>
+    <h2>whats the difference between volt and maglev trains?</h2>
+    <p>volt is a levetating capsule thats way faster and cheaper than a maglev train, in fact volt is the ultamate version of a maglev train, its the future traveling, its a new traveling system, not a car nor a train it flys yet not a plane. meet the future traveling capsule everyone. the future begins here</p>
+
+    <script>
+        function toggleMenu() {
+            const menuContent = document.getElementById('menuContent');
+            menuContent.style.display = (menuContent.style.display === 'block') ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOLT</title>
+    <style>
+        body {
+            background: url('creative.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            color: white;
+            height: 100vh; /* Full height for vertical centering */
+        }
+
+        h1 {
+            color: #fff;
+            font-weight: 700;
+            text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+            font-size: 3rem;
+            margin-top: 50px;
+        }
+
+        /* Menu styling */
+        .menu-container {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            z-index: 10; /* Ensure it appears above other elements */
+        }
+
+        .menu-icon {
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .menu-icon .bar {
+            width: 25px;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.8);
+            margin: 4px 0;
+            transition: 0.4s;
+        }
+
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            min-width: 160px;
+            border-radius: 10px;
+        }
+
+        .menu-content a {
+            color: #fff;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .menu-content a:hover {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        /* Chat box styling */
+        .chat-container {
+            width: 90%;
+            max-width: 400px;
+            background: rgba(0, 0, 51, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-top: 30px;
+        }
+
+        .chat-box {
+            height: 300px;
+            padding: 15px;
+            overflow-y: auto;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        #command-select {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            outline: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+
+        #send-btn {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #send-btn:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.8);
+            width: fit-content;
+            max-width: 75%; 
+            word-wrap: break-word; 
+        }
+
+        .message.user {
+            background-color: rgba(255, 255, 255, 0.35);
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.bot {
+            background-color: rgba(2, 22, 114, 0.35);
+            margin-right: auto;
+            text-align: left;
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: none;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #000;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin: 0 3px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            animation: blink 1.4s infinite both;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1366px) {
+            h1 {
+                font-size: 2.5rem; /* Adjusted for medium screens */
+            }
+            .chat-container {
+                width: 90%;
+                max-width: 500px; /* Slightly increased for larger devices */
+            }
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                background: url('creative.jpeg') no-repeat center center fixed;
+                background-size:cover;
+                text-align: center;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                font-family: Arial, sans-serif;
+                color: white;
+                padding: 35px;
+            }
+    
+            h1 {
+                color: #fff;
+                font-weight: 700;
+                text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+                font-size: 8rem;
+                margin-top: -150px;
+            }
+    
+            .menu-container {
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                z-index: 10; /* Ensure it appears above other elements */
+            }
+    
+            .menu-icon {
+                cursor: pointer;
+                padding: 20px;
+            }
+    
+            .menu-icon .bar {
+                width: 35px;
+                height: 5px;
+                background-color: rgba(255, 255, 255, 0.8);
+                margin: 4px 0;
+                transition: 0.4s;
+            }
+    
+            .menu-content {
+                display: none;
+                position: absolute;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.7);
+                box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+                z-index: 1;
+                min-width: 400px;
+                min-height: 400px;
+                border-radius: 10px;
+            }
+    
+            .menu-content a {
+                color: #fff;
+                padding: 20px 40px;
+                text-decoration: none;
+                display: block;
+                border-radius: 10px;
+                transition: background-color 0.3s;
+                font-size: 3rem;
+            }
+    
+            .menu-content a:hover {
+                background-color: #ddd;
+                color: #333;
+            }
+    
+            .chat-container {
+                max-width: 800px;
+                background: rgba(0, 0, 51, 0.7);
+                border-radius: 15px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+            }
+    
+            .chat-box {
+                height: 600px;
+                padding: 15px;
+                overflow-y: auto;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                flex-direction: column;
+            }
+    
+            .input-area {
+                display: flex;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.5);
+                font-size: 20px;
+            }
+    
+            #command-select {
+                flex-grow: 1;
+                padding: 10px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+                outline: none;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: #fff;
+                font-size: 2rem;
+            }
+    
+            #send-btn {
+                margin-left: 10px;
+                padding: 10px 20px;
+                border: none;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                font-size: 2rem;
+            }
+    
+            #send-btn:hover {
+                background-color: rgba(0, 0, 0, 0.9);
+            }
+    
+            .message {
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(255, 255, 255, 0.8);
+                width: fit-content;
+                max-width: 75%;
+                word-wrap: break-word; 
+                font-size: 1.8rem;
+            }
+    
+            .message.user {
+                background-color: rgba(255, 255, 255, 0.35);
+                margin-left: auto;
+                text-align: right;
+            }
+    
+            .message.bot {
+                background-color: rgba(2, 22, 114, 0.35);
+                margin-right: auto;
+                text-align: left;
+            }
+    
+            .chat-box::-webkit-scrollbar {
+                width: 8px;
+            }
+    
+            .chat-box::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.2);
+            }
+    
+            .chat-box::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.5);
+                border-radius: 8px;
+            }
+    
+            .chat-box::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.8);
+            }
+    
+            /* Typing indicator */
+            .typing-indicator {
+                display: none;
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(0, 0, 0, 0.1);
+                color: #000;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+    
+            .dot {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                margin: 0 3px;
+                background-color: rgba(0, 0, 0, 0.7);
+                border-radius: 50%;
+                animation: blink 1.4s infinite both;
+            }
+    
+            .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+    
+            .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+        }
+
+        
+
+        @media (max-width: 900px) {
+            body {
+                background: url('creative.jpeg') no-repeat center center fixed;
+                background-size: cover;
+                text-align: center;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                font-family: Arial, sans-serif;
+                color: white;
+            }
+    
+            h1 {
+                color: #fff;
+                font-weight: 700;
+                text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+                font-size: 6rem;
+                margin-top: -50px;
+            }
+    
+            .menu-container {
+                position: absolute;
+                top: 25px;
+                right: 20px;
+                z-index: 10; 
+            }
+    
+            .menu-icon {
+                cursor: pointer;
+                padding: 10px;
+            }
+    
+            .menu-icon .bar {
+                width: 35px;
+                height: 5px;
+                background-color: rgba(255, 255, 255, 0.8);
+                margin: 4px 0;
+                transition: 0.4s;
+            }
+    
+            .menu-content {
+                display: none;
+                position: absolute;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.7);
+                box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+                z-index: 1;
+                min-width: 350px;
+                border-radius: 10px;
+                padding: 10px 20px;
+            }
+    
+            .menu-content a {
+                color: #fff;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                border-radius: 10px;
+                transition: background-color 0.3s;
+            }
+    
+            .menu-content a:hover {
+                background-color: #ddd;
+                color: #333;
+            }
+    
+            /* Chat box styling */
+            .chat-container {
+                width: 90%;
+                max-width: 700px;
+                background: rgba(0, 0, 51, 0.7);
+                border-radius: 15px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+            }
+    
+            .chat-box {
+                height: 600px;
+                padding: 15px;
+                overflow-y: auto;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                flex-direction: column;
+            }
+    
+            .input-area {
+                display: flex;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.5);
+            }
+    
+            #command-select {
+                flex-grow: 1;
+                padding: 10px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+                outline: none;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: #fff;
+                font-size: 30px;
+            }
+    
+            #send-btn {
+                margin-left: 10px;
+                padding: 10px 20px;
+                border: none;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                font-size: 30px;
+            }
+    
+            #send-btn:hover {
+                background-color: rgba(0, 0, 0, 0.9);
+            }
+    
+            .message {
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(255, 255, 255, 0.8);
+                width: fit-content;
+                max-width: 75%; /* Added max-width for better readability */
+                word-wrap: break-word; /* Ensures long messages break correctly */
+            }
+    
+            .message.user {
+                background-color: rgba(255, 255, 255, 0.35);
+                margin-left: auto;
+                text-align: right;
+            }
+    
+            .message.bot {
+                background-color: rgba(2, 22, 114, 0.35);
+                margin-right: auto;
+                text-align: left;
+            }
+    
+            .chat-box::-webkit-scrollbar {
+                width: 8px;
+            }
+    
+            .chat-box::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.2);
+            }
+    
+            .chat-box::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.5);
+                border-radius: 8px;
+            }
+    
+            .chat-box::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.8);
+            }
+    
+            
+            .typing-indicator {
+                display: none;
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(0, 0, 0, 0.1);
+                color: #000;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+    
+            .dot {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                margin: 0 3px;
+                background-color: rgba(0, 0, 0, 0.7);
+                border-radius: 50%;
+                animation: blink 1.4s infinite both;
+            }
+    
+            .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+    
+            .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            body {
+                background: url('creative.jpeg') no-repeat center center fixed;
+                background-size: cover;
+                text-align: center;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                font-family: Arial, sans-serif;
+                color: white;
+            }
+    
+            h1 {
+                color: #fff;
+                font-weight: 700;
+                text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+                font-size: 6rem;
+                margin-top: -50px;
+            }
+    
+            .menu-container {
+                position: absolute;
+                top: 25px;
+                right: 20px;
+                z-index: 10; 
+            }
+    
+            .menu-icon {
+                cursor: pointer;
+                padding: 10px;
+            }
+    
+            .menu-icon .bar {
+                width: 35px;
+                height: 5px;
+                background-color: rgba(255, 255, 255, 0.8);
+                margin: 4px 0;
+                transition: 0.4s;
+            }
+    
+            .menu-content {
+                display: none;
+                position: absolute;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.7);
+                box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+                z-index: 1;
+                width: 350px;
+                height: 350px;
+                border-radius: 10px;
+                padding: 10px 20px;
+            }
+    
+            .menu-content a {
+                color: #fff;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                border-radius: 10px;
+                transition: background-color 0.3s;
+            }
+    
+            .menu-content a:hover {
+                background-color: #ddd;
+                color: #333;
+            }
+
+            .chat-container {
+                width: 90%;
+                max-width: 700px;
+                background: rgba(0, 0, 51, 0.7);
+                border-radius: 15px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+            }
+    
+            .chat-box {
+                height: 600px;
+                padding: 15px;
+                overflow-y: auto;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                flex-direction: column;
+            }
+    
+            .input-area {
+                display: flex;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.5);
+            }
+    
+            #command-select {
+                flex-grow: 1;
+                padding: 10px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+                outline: none;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: #fff;
+                font-size: 30px;
+            }
+    
+            #send-btn {
+                margin-left: 10px;
+                padding: 10px 20px;
+                border: none;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                font-size: 30px;
+            }
+    
+            #send-btn:hover {
+                background-color: rgba(0, 0, 0, 0.9);
+            }
+    
+            .message {
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(255, 255, 255, 0.8);
+                width: fit-content;
+                max-width: 75%; 
+                word-wrap: break-word;
+            }
+    
+            .message.user {
+                background-color: rgba(255, 255, 255, 0.35);
+                margin-left: auto;
+                text-align: right;
+            }
+    
+            .message.bot {
+                background-color: rgba(2, 22, 114, 0.35);
+                margin-right: auto;
+                text-align: left;
+            }
+    
+            .chat-box::-webkit-scrollbar {
+                width: 8px;
+            }
+    
+            .chat-box::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.2);
+            }
+    
+            .chat-box::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.5);
+                border-radius: 8px;
+            }
+    
+            .chat-box::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.8);
+            }
+    
+            .typing-indicator {
+                display: none;
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(0, 0, 0, 0.1);
+                color: #000;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+    
+            .dot {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                margin: 0 3px;
+                background-color: rgba(0, 0, 0, 0.7);
+                border-radius: 50%;
+                animation: blink 1.4s infinite both;
+            }
+    
+            .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+    
+            .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+
+        }
+
+        @media (max-width: 430px) {
+            body {
+                background: url('creative.jpeg') no-repeat center center fixed;
+                background-size: cover;
+                text-align: center;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                font-family: Arial, sans-serif;
+                color: white;
+            }
+        
+            h1 {
+                color: #fff;
+                font-weight: 700;
+                text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+                font-size: 4rem;
+                margin-top: -100px;
+            }
+        
+            .menu-container {
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                z-index: 10;
+                max-width: 100px;
+            }
+        
+            .menu-icon {
+                cursor: pointer;
+                padding: 20px;
+            }
+        
+            .menu-icon .bar {
+                width: 30px;
+                height: 4px;
+                background-color: rgba(255, 255, 255, 0.8);
+                margin: 4px 0;
+                transition: 0.4s;
+            }
+
+            .menu-content {
+                display: none; 
+                position: absolute;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.7);
+                box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+                border-radius: 10px;
+                height: auto; 
+                min-height: 100px; 
+                padding: 10px 0; 
+                min-width: 100px;
+            }
+            
+            
+            .menu-content a {
+                color: #fff;
+                padding: 10px 15px;
+                text-decoration: none;
+                display: block;
+                border-radius: 10px;
+                transition: background-color 0.3s;
+                font-size: 1.5rem;
+                text-align: center;
+            }
+        
+            .menu-content a:hover {
+                background-color: #ddd;
+                color: #333;
+            }
+        
+
+            .chat-container {
+                background: rgba(0, 0, 51, 0.7);
+                border-radius: 15px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+                margin-top: 30px;
+                height: 500px;
+            }
+        
+            .chat-box {
+                height: 400px;
+                padding: 15px;
+                overflow-y: auto;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                flex-direction: column;
+            }
+        
+            .input-area {
+                display: flex;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.5);
+            }
+        
+            #command-select {
+                flex-grow: 1;
+                padding: 10px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+                outline: none;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: #fff;
+                max-width: 180px;
+                max-height: 75px;
+                font-size: 1.2rem;
+            }
+        
+            #send-btn {
+                margin-left: 10px;
+                padding: 10px 20px;
+                border: none;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                max-height: 75px;
+                max-width: 95px;
+                font-size: 1.2rem;
+            }
+        
+            #send-btn:hover {
+                background-color: rgba(0, 0, 0, 0.9);
+            }
+        
+            .message {
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(255, 255, 255, 0.8);
+                width: fit-content;
+                max-width: 65%;
+                word-wrap: break-word;
+                font-size: 1.2rem;
+            }
+        
+            .message.user {
+                background-color: rgba(255, 255, 255, 0.35);
+                margin-left: auto;
+                text-align: right;
+            }
+        
+            .message.bot {
+                background-color: rgba(2, 22, 114, 0.35);
+                margin-right: auto;
+                text-align: left;
+            }
+        
+            .chat-box::-webkit-scrollbar {
+                width: 8px;
+            }
+        
+            .chat-box::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.2);
+            }
+        
+            .chat-box::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.5);
+                border-radius: 8px;
+            }
+        
+            .chat-box::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.8);
+            }
+        
+            /* Typing indicator */
+            .typing-indicator {
+                display: none;
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(0, 0, 0, 0.1);
+                color: #000;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+        
+            .dot {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                margin: 0 3px;
+                background-color: rgba(0, 0, 0, 0.7);
+                border-radius: 50%;
+                animation: blink 1.4s infinite both;
+            }
+        
+            .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+        
+            .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+        }
+        
+
+        @media (max-width: 360px) {
+            body {
+                background: url('creative.jpeg') no-repeat center center fixed;
+                background-size: cover;
+                text-align: center;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                font-family: Arial, sans-serif;
+                color: white;
+            }
+        
+            h1 {
+                color: #fff;
+                font-weight: 700;
+                text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5);
+                font-size: 4rem;
+                margin-top: -50px;
+            }
+        
+            .menu-container {
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                z-index: 10;
+            }
+        
+            .menu-icon {
+                cursor: pointer;
+                padding: 20px;
+            }
+        
+            .menu-icon .bar {
+                width: 30px;
+                height: 4px;
+                background-color: rgba(255, 255, 255, 0.8);
+                margin: 4px 0;
+                transition: 0.4s;
+            }
+
+            .menu-content {
+                display: none; 
+                position: absolute;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.7);
+                box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+                border-radius: 10px;
+                height: auto; 
+                min-height: 100px; 
+                padding: 10px 0; 
+            }
+            
+            
+            .menu-content a {
+                color: #fff;
+                padding: 10px 15px;
+                text-decoration: none;
+                display: block;
+                border-radius: 10px;
+                transition: background-color 0.3s;
+                font-size: 1.5rem;
+            }
+        
+            .menu-content a:hover {
+                background-color: #ddd;
+                color: #333;
+            }
+        
+
+            .chat-container {
+                background: rgba(0, 0, 51, 0.7);
+                border-radius: 15px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                overflow: hidden;
+                margin-top: 30px;
+                height: 400px;
+            }
+        
+            .chat-box {
+                height: 310px;
+                padding: 15px;
+                overflow-y: auto;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                background: rgba(255, 255, 255, 0.2);
+                display: flex;
+                flex-direction: column;
+            }
+        
+            .input-area {
+                display: flex;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.5);
+            }
+        
+            #command-select {
+                flex-grow: 1;
+                padding: 10px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+                outline: none;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: #fff;
+                max-width: 160px;
+                max-height: 75px;
+                font-size: 1rem;
+            }
+        
+            #send-btn {
+                margin-left: 10px;
+                padding: 10px 20px;
+                border: none;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                max-height: 75px;
+                max-width: 75px;
+                font-size: 1rem;
+            }
+        
+            #send-btn:hover {
+                background-color: rgba(0, 0, 0, 0.9);
+            }
+        
+            .message {
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(255, 255, 255, 0.8);
+                width: fit-content;
+                max-width: 65%;
+                word-wrap: break-word;
+                font-size: 1.2rem;
+            }
+        
+            .message.user {
+                background-color: rgba(255, 255, 255, 0.35);
+                margin-left: auto;
+                text-align: right;
+            }
+        
+            .message.bot {
+                background-color: rgba(2, 22, 114, 0.35);
+                margin-right: auto;
+                text-align: left;
+            }
+        
+            .chat-box::-webkit-scrollbar {
+                width: 8px;
+            }
+        
+            .chat-box::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.2);
+            }
+        
+            .chat-box::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.5);
+                border-radius: 8px;
+            }
+        
+            .chat-box::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.8);
+            }
+        
+            .typing-indicator {
+                display: none;
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 8px;
+                background-color: rgba(0, 0, 0, 0.1);
+                color: #000;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+        
+            .dot {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                margin: 0 3px;
+                background-color: rgba(0, 0, 0, 0.7);
+                border-radius: 50%;
+                animation: blink 1.4s infinite both;
+            }
+        
+            .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+        
+            .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }   
+        }
+
+    </style>
+</head>
+<body>
+    <h1>F.A.Q.</h1>
+
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <div class="input-area">
+            <select id="command-select">
+                <option value="what is your name">What is your name?</option>
+                <option value="what are you">What are you?</option>
+                <option value="who came up with the idea">Who came up with the idea?</option>
+                <option value="who helped develop the idea">Who helped develop the idea?</option>
+                <option value="who are the creators of volt">Who are the creators of volt?</option>
+                <option value="whats volt">What's volt?</option>
+                <option value="how does volt work">How does volt work?</option>
+                <option value="date">Date</option>
+                <option value="time">Time</option>
+            </select>
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <div class="menu-container">
+        <div class="menu-icon" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="menu-content" id="menuContent">
+            <a href="index2.html">Home</a>
+            <a href="index3.html">About</a>
+            <a href="index4.html">More about volt</a>
+            <a href="index5.html">Volt</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('send-btn').addEventListener('click', sendMessage);
+
+        async function sendMessage() {
+            const chatInput = document.getElementById('command-select');
+            const messageText = chatInput.value;
+
+            if (messageText) {
+                const chatBox = document.getElementById('chat-box');
+
+                const userMessage = document.createElement('div');
+                userMessage.classList.add('message', 'user');
+                userMessage.textContent = messageText;
+
+                chatBox.appendChild(userMessage);
+
+                const typingIndicator = document.createElement('div');
+                typingIndicator.classList.add('typing-indicator');
+                typingIndicator.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+                chatBox.appendChild(typingIndicator);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                chatBox.removeChild(typingIndicator);
+
+                const botMessage = document.createElement('div');
+                botMessage.classList.add('message', 'bot');
+                botMessage.textContent = getBotResponse(messageText);
+
+                chatBox.appendChild(botMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                speak(botMessage.textContent);
+            }
+        }
+
+        function getBotResponse(message) {
+            switch (message.toLowerCase()) {
+                case 'what is your name':
+                    return 'My name is Volt!';
+                case 'what are you':
+                    return 'I am an A.I chatbot designed to help with all your questions!';
+                case 'who came up with the idea':
+                    return 'The idea came from Samir and Nabil.';
+                case 'who helped develop the idea':
+                    return 'The idea was developed with the help of abdulhamid ali and ahmed ammar.';
+                case 'who are the creators of volt':
+                    return 'Volt was created by a group called Leviocity.';
+                case 'whats volt':
+                    return 'Volt is a new fast, cheap, safe transportation system.';
+                case 'how does volt work':
+                    return 'Its far more complicated to explain here. You can visit the Volt section for detailed answers.';
+                case 'date':
+                    return new Date().toLocaleDateString();
+                case 'time':
+                    return new Date().toLocaleTimeString();
+                default:
+                    return 'Sorry, I do not understand that command.';
+            }
+        }
+
+        function toggleMenu() {
+            const menuContent = document.getElementById('menuContent');
+            menuContent.style.display = menuContent.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+
+            const femaleBritishVoice = voices.find(voice => voice.lang === 'en-GB' && voice.name.includes('Female'));
+
+            if (femaleBritishVoice) {
+                speech.voice = femaleBritishVoice;
+            }
+
+            speech.lang = 'en-GB';
+            speech.volume = 1;
+            speech.rate = 1.0;
+            speech.pitch = 1.1;
+            speech.onend = () => {
+                console.log("Speech has finished.");
+            };
+
+            window.speechSynthesis.speak(speech);
+        }
+
+        window.speechSynthesis.onvoiceschanged = () => {
+            speak("hello there.  what's  on  your  mind.");
+        };
+    </script>
+</body>
+</html>
